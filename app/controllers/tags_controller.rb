@@ -146,6 +146,17 @@ class TagsController < ::ApplicationController
     end
   end
 
+  def count_unused
+    guardian.ensure_can_admin_tags!
+    render json: { count: Tag.where(topic_count: 0, pm_topic_count: 0).count }
+  end
+
+  def destroy_unused
+    guardian.ensure_can_admin_tags!
+    Tag.where(topic_count: 0, pm_topic_count: 0).destroy_all
+    render json: success_json
+  end
+
   def destroy
     guardian.ensure_can_admin_tags!
     tag_name = params[:tag_id]
